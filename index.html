@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Input with Bad Word Detection</title>
+    <style>
+
+      textarea{
+        border-radius: 20px;
+        padding: 10px;
+      }
+
+
+
+
+
+
+        #textInput, #censoredText {
+            width: 300px;
+            height: 150px;
+            margin-bottom: 10px;
+        }
+        span {
+            color: red;
+        }
+        body{
+            background-color: #111;
+        }
+        .input{
+            margin-right: 30rem;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            text-align: center;
+        }
+        #imageInput {
+            display: block;
+            align-items: left;
+            align-self: left;
+        }
+        #preview {
+            max-width: 500px;
+            margin: 20px auto;
+            align-items: right;
+        }
+        #uploadedImage {
+            max-width: 100%;
+            height: auto;
+        }
+
+
+/* Hide the default file input */
+#imageInput {
+    display: none;
+}
+
+/* Custom button to mimic file input */
+#imageInput + label {
+    display: inline-block;
+    border: 2px solid #3498db;
+    color: #3498db;
+    background-color: transparent;
+    padding: 8px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+/* Style the custom button on hover */
+#imageInput + label:hover {
+    background-color: #3498db;
+    color: #fff;
+}
+
+/* Style the custom button on focus */
+#imageInput + label:focus {
+    outline: none;
+}
+
+/* Style for the selected file name display */
+.file-name {
+    margin-top: 5px;
+    font-size: 14px;
+    color: #333;
+}
+/*#preview{
+    border: 1px white solid;
+    width: 400px;
+    height: 170px;
+    margin-left: auto;
+    margin-right: 0;
+}
+*/
+
+
+
+
+/* Hide the default file input */
+#fileInput {
+    display: none;
+}
+
+/* Custom button to mimic file input */
+#fileInput + label {
+    display: inline-block;
+    border: 2px solid #3498db;
+    color: #3498db;
+    background-color: transparent;
+    padding: 8px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+/* Style the custom button on hover */
+#fileInput + label:hover {
+    background-color: #3498db;
+    color: #fff;
+}
+
+/* Style the custom button on focus */
+#fileInput + label:focus {
+    outline: none;
+}
+
+/* Style for the selected file name display */
+.file-name {
+    margin-top: 5px;
+    font-size: 14px;
+    color: #333;
+}
+
+.all{
+    white-space: pre;
+}
+#python{
+    color: #ffffffe0;
+    display: inline;
+}
+
+
+    </style>
+</head>
+<body>
+    <br>
+    <br>
+    <textarea class="input" style="width: 400px;" id="textInput" placeholder="Type your text here..."></textarea>
+    <textarea class="result" style="width: 400px;" placeholder="result..." id="censoredText" readonly></textarea> 
+<hr>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>   
+
+<div align="center" class="alll">
+
+<input type="file" id="imageInput" accept="image/*" style="display: none;">
+<label for="imageInput" class="upload-btn">Upload an Image</label>
+
+<input type="file" id="fileInput" accept="image/*" style="display: none;">
+<label for="fileInput" class="upload-btn">Upload a file</label>
+
+</div>
+
+    <div id="preview"></div>
+
+    <br>
+    <br>
+    <br>
+    <h3 id="python">Python version</h3> <a style="color: blue;" download href="file.py">Click here</a>
+
+    <script>
+        document.getElementById('textInput').addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Prevent the default behavior of Enter key (new line)
+                censorAndDisplayText();
+            }
+        });
+
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function censorAndDisplayText() {
+            const badWords = [
+    'bad',
+    'dog',
+    'donkey',
+    'damn',
+    'hell',
+    'shit',
+    'asshole',
+    'bitch',
+    'fuck',
+    'cunt',
+    'bastard',
+    'dick',
+    'pussy',
+    'cock',
+    'whore',
+    'slut',
+    'faggot',
+    'nigger',
+    'chink',
+    'spic',
+    'kike',
+    'retard',
+    'moron',
+    'idiot',
+    'stupid',
+    'douchebag',
+    'asshat',
+    'motherfucker',
+    'son of a bitch',
+    'twat',
+    'arsehole',
+    'wanker',
+    'bollocks',
+    'prick',
+    'knob',
+    'jackass',
+    'twatwaffle',
+    'cum',
+    'cocksucker',
+    'motherfucking',
+    'piss',
+    'whore',
+    'slag',
+    'bimbo',
+    'slutty',
+    'douchecanoe',
+    'fucker',
+    'assclown',
+    'douche',
+    'wankstain',
+    'scumbag',
+    'molest',
+    'rape',
+    'pedophile',
+    'incest',
+    'bestiality',
+    'genocide',
+    'terrorist',
+    'hate',
+    'bigot',
+    'racist',
+    'sexist',
+    'homophobic',
+    'transphobic',
+    'xenophobic',
+    'ableist',
+    'islamophobic',
+    'antisemitic',
+    'سيء',
+    'كلب',
+    'حمار',
+    'لعنة',
+    'جحيم',
+    'قرف',
+    'كلبة',
+    'نكاح',
+    'كس',
+    'زب',
+    'عاهرة',
+    'فاسقة',
+    'مثلي الجنس',
+    'نيغر',
+    'صيني',
+    'مقزز',
+    'حمار',
+    'تجاهل',
+    'أغبى',
+    'غبي',
+    'لئيم',
+    'جلبة',
+    'سوء الحظ',
+    'تافه',
+    'سخيف',
+    'غطاء',
+    'بابي',
+    'نوع أمي',
+    'خول',
+    'حمار',
+    'خراء',
+    'لصق',
+    'شرموطة',
+    'لتنظيم',
+    'لعين',
+    'بغيض',
+    'قذر',
+    'عنصري',
+    'جنسي',
+    'تعصبي',
+    'كراهية',
+    'قومي',
+    'فاشي',
+    'تمييزي',
+    'معادٍ',
+    'إسلامي',
+    'معادٍ للسامية'
+];
+
+            const inputText = document.getElementById('textInput').value;
+            const words = inputText.split(/\s+/); 
+
+            const censoredWords = words.map(word => {
+                if (badWords.includes(word.toLowerCase())) {
+                    
+                    return '<span style="color: red;">(bad word)</span>';
+                }
+                return escapeHtml(word);
+            });
+
+            const censoredText = censoredWords.join(' '); 
+
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = censoredText;
+
+            const censoredTextContent = tempDiv.textContent || tempDiv.innerText || '';
+           
+            document.getElementById('censoredText').value = censoredTextContent;
+        }
+       
+ 
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const img = new Image();
+                img.src = e.target.result;
+
+                img.onload = function() {
+                    document.getElementById('preview').innerHTML = '<img src="' + img.src + '" id="uploadedImage">';
+                };
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        document.getElementById('imageInput').addEventListener('change', handleFileUpload);
+
+    </script>
+</body>
+</html>
